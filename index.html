@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- السطر ده مهم جداً لمنع الزووم الأساسي -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تحدي مانيز برجر</title>
     <style>
@@ -19,9 +20,10 @@
             min-height: 100vh; 
             box-sizing: border-box;
             overflow-x: hidden;
+            /* السطر ده بيمنع الزووم بالضغطتين في كل الموبايلات الحديثة */
+            touch-action: manipulation; 
         }
 
-        /* تصميم الكارت الأساسي */
         .card {
             background: white;
             padding: 40px 20px;
@@ -35,7 +37,6 @@
             z-index: 10;
         }
 
-        /* تصميم اللوجو */
         .brand-logo { 
             width: 110px; 
             height: 110px; 
@@ -49,7 +50,6 @@
         h1 { font-size: 28px; margin-bottom: 5px; color: #d35400; font-weight: 900; }
         p { font-size: 16px; color: #7f8c8d; margin-bottom: 25px; font-weight: 600; }
 
-        /* منطقة الإحصائيات */
         .stats-container {
             display: flex;
             justify-content: space-around;
@@ -61,7 +61,6 @@
         }
         .stats { font-size: 18px; font-weight: bold; color: #e65100; }
 
-        /* زر البرجر التفاعلي */
         #burger-btn { 
             font-size: 110px; 
             background: none; 
@@ -72,13 +71,14 @@
             margin: 15px 0; 
             -webkit-tap-highlight-color: transparent; 
             filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15));
+            /* السطر ده بيقفل الزووم وحركة الشاشة تماماً على البرجر بس */
+            touch-action: none; 
         }
         #burger-btn:active { 
             transform: scale(0.85); 
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
         }
 
-        /* الأزرار العامة */
         .btn { 
             background: linear-gradient(135deg, #ff9800, #f39c12); 
             color: white; 
@@ -115,7 +115,6 @@
             background-color: #f0fdf4; 
         }
 
-        /* إيفيكت الـ +1 بيطير */
         .plus-one {
             position: absolute;
             color: #e74c3c;
@@ -131,7 +130,6 @@
             100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
         }
 
-        /* إيفيكت ورق الاحتفال */
         .confetti {
             position: fixed;
             width: 12px;
@@ -158,7 +156,6 @@
                 <div class="stats" id="score">🍔 0 ضغطة</div>
             </div>
             
-            <!-- تم إضافة (event) هنا عشان نحدد مكان الضغطة بالظبط -->
             <button id="burger-btn" onclick="tapBurger(event)" disabled>🍔</button>
             <br>
             <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
@@ -176,7 +173,11 @@
     <script>
         const restaurantWhatsAppNumber = "201070500094"; 
 
-        // إضافة مؤثر صوتي للضغطة
+        // حماية إضافية بالسكربت لمنع الزووم في الآيفون القديم
+        document.addEventListener('dblclick', function(event) {
+            event.preventDefault();
+        }, { passive: false });
+
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
 
         let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
@@ -196,7 +197,6 @@
             scoreDisplay.innerText = `🍔 ${score} ضغطة`; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
             startBtn.style.display = 'none'; burgerBtn.disabled = false;
             
-            // تشغيل الصوت بصوت واطي في البداية عشان المتصفح يسمح بيه
             clickSound.volume = 0.5;
             clickSound.play().catch(e => console.log("الصوت محتاج تفاعل الأول"));
 
@@ -209,14 +209,11 @@
         function tapBurger(event) {
             if (!isPlaying) return;
             
-            // تشغيل الصوت مع كل ضغطة
             clickSound.currentTime = 0;
             clickSound.play().catch(e => console.log(e));
 
-            // زيادة السكور
             score++; scoreDisplay.innerText = `🍔 ${score} ضغطة`;
 
-            // عمل إيفيكت +1 في مكان الضغطة بالظبط
             createPlusOneEffect(event);
 
             if (score >= 20) winGame();
@@ -227,7 +224,6 @@
             plus.classList.add('plus-one');
             plus.innerText = '+1';
             
-            // حساب مكان الماوس أو الصباع
             let x = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth / 2;
             let y = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight / 2;
             
@@ -235,8 +231,6 @@
             plus.style.top = (y - 30) + 'px';
             
             document.body.appendChild(plus);
-            
-            // مسح الإيفيكت بعد ما يخلص عشان منزحمش الشاشة
             setTimeout(() => plus.remove(), 600);
         }
 
@@ -257,7 +251,6 @@
             const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
             whatsappLink.href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
             
-            // تشغيل إيفيكت الاحتفال
             createConfetti();
         }
 
