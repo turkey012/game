@@ -2,11 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <!-- السطر ده مهم جداً لمنع الزووم الأساسي -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تحدي مانيز برجر</title>
     <style>
-        /* إعدادات الصفحة والخلفية */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #fff3e0; 
@@ -20,13 +18,12 @@
             min-height: 100vh; 
             box-sizing: border-box;
             overflow-x: hidden;
-            /* السطر ده بيمنع الزووم بالضغطتين في كل الموبايلات الحديثة */
             touch-action: manipulation; 
         }
 
         .card {
             background: white;
-            padding: 40px 20px;
+            padding: 30px 20px;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.08);
             max-width: 400px;
@@ -38,57 +35,71 @@
         }
 
         .brand-logo { 
-            width: 110px; 
-            height: 110px; 
+            width: 90px; 
+            height: 90px; 
             border-radius: 50%; 
             object-fit: cover; 
             border: 4px solid #ff9800; 
             box-shadow: 0 8px 16px rgba(255, 152, 0, 0.2); 
-            margin-bottom: 15px; 
+            margin-bottom: 10px; 
         }
 
-        h1 { font-size: 28px; margin-bottom: 5px; color: #d35400; font-weight: 900; }
-        p { font-size: 16px; color: #7f8c8d; margin-bottom: 25px; font-weight: 600; }
+        h1 { font-size: 26px; margin-bottom: 5px; color: #d35400; font-weight: 900; }
+        p { font-size: 15px; color: #7f8c8d; margin-bottom: 15px; font-weight: 600; }
 
         .stats-container {
             display: flex;
             justify-content: space-around;
             background: #fff8e1;
             border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 2px solid #ffe082;
         }
-        .stats { font-size: 18px; font-weight: bold; color: #e65100; }
+        .stats { font-size: 16px; font-weight: bold; color: #e65100; }
 
-        #burger-btn { 
-            font-size: 110px; 
+        /* منطقة اللعب المخصصة لحركة البرجر والفخ */
+        .play-zone {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: #fafafa;
+            border-radius: 16px;
+            border: 2px dashed #ffb74d;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        /* تنسيق البرجر والفخ عشان يتحركوا بحرية */
+        #burger-btn, #trap-btn {
+            position: absolute;
             background: none; 
             border: none; 
             cursor: pointer; 
             user-select: none; 
-            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            margin: 15px 0; 
             -webkit-tap-highlight-color: transparent; 
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15));
-            /* السطر ده بيقفل الزووم وحركة الشاشة تماماً على البرجر بس */
-            touch-action: none; 
+            touch-action: none;
+            transition: transform 0.1s;
         }
-        #burger-btn:active { 
-            transform: scale(0.85); 
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
-        }
+        
+        #burger-btn { font-size: 70px; filter: drop-shadow(0 8px 8px rgba(0,0,0,0.15)); z-index: 2; }
+        #trap-btn { font-size: 60px; display: none; z-index: 1; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1)); }
+
+        #burger-btn:active, #trap-btn:active { transform: scale(0.8); }
+
+        /* تأثير اللون الأحمر عند الضغط على الفخ */
+        .error-flash { background: #ffcdd2 !important; }
 
         .btn { 
             background: linear-gradient(135deg, #ff9800, #f39c12); 
             color: white; 
             border: none; 
             padding: 15px 30px; 
-            font-size: 20px; 
+            font-size: 18px; 
             border-radius: 50px; 
             cursor: pointer; 
             font-weight: bold; 
-            margin-top: 10px; 
             text-decoration: none; 
             display: inline-block; 
             width: 85%;
@@ -96,51 +107,31 @@
             transition: all 0.3s ease;
             box-sizing: border-box;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(243, 156, 18, 0.4); }
         .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); }
-        .whatsapp-btn:hover { box-shadow: 0 12px 20px rgba(37, 211, 102, 0.4); }
 
         #game-area, #result-area { display: block; }
         #result-area { display: none; }
         
         .discount-code { 
-            font-size: 34px; 
-            color: #27ae60; 
-            font-weight: 900; 
-            letter-spacing: 3px; 
-            margin: 20px 0; 
-            padding: 20px; 
-            border: 3px dashed #2ecc71; 
-            border-radius: 16px; 
-            background-color: #f0fdf4; 
+            font-size: 30px; color: #27ae60; font-weight: 900; letter-spacing: 3px; 
+            margin: 15px 0; padding: 15px; border: 3px dashed #2ecc71; 
+            border-radius: 16px; background-color: #f0fdf4; 
         }
 
-        .plus-one {
-            position: absolute;
-            color: #e74c3c;
-            font-size: 30px;
-            font-weight: 900;
-            pointer-events: none;
-            animation: floatUp 0.6s ease-out forwards;
-            z-index: 100;
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+        .plus-one, .minus-one {
+            position: absolute; font-size: 24px; font-weight: 900; pointer-events: none;
+            animation: floatUp 0.5s ease-out forwards; z-index: 100;
         }
+        .plus-one { color: #2ecc71; }
+        .minus-one { color: #e74c3c; }
+
         @keyframes floatUp {
             0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
+            100% { transform: translateY(-40px) scale(1.5); opacity: 0; }
         }
 
-        .confetti {
-            position: fixed;
-            width: 12px;
-            height: 12px;
-            background-color: #f1c40f;
-            animation: fall 3s linear infinite;
-            z-index: 1;
-        }
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(720deg); }
-        }
+        .confetti { position: fixed; width: 10px; height: 10px; z-index: 1; animation: fall 3s linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
     </style>
 </head>
 <body>
@@ -149,15 +140,19 @@
         <div id="game-area">
             <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
             <h1>تحدي الجوع! 🔥</h1>
-            <p>اضغط على البرجر 20 مرة في 10 ثواني</p>
+            <p>اضغط على البرجر 20 مرة.. واهرب من البروكلي 🥦!</p>
             
             <div class="stats-container">
                 <div class="stats" id="timer">⏳ 10 ثواني</div>
-                <div class="stats" id="score">🍔 0 ضغطة</div>
+                <div class="stats" id="score">🍔 0 / 20</div>
             </div>
             
-            <button id="burger-btn" onclick="tapBurger(event)" disabled>🍔</button>
-            <br>
+            <!-- مساحة اللعب -->
+            <div class="play-zone" id="play-zone">
+                <button id="burger-btn" onclick="tapBurger(event)" style="top: 35%; left: 35%;">🍔</button>
+                <button id="trap-btn" onclick="tapTrap(event)">🥦</button>
+            </div>
+
             <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
         </div>
 
@@ -172,33 +167,52 @@
 
     <script>
         const restaurantWhatsAppNumber = "201070500094"; 
-
-        // حماية إضافية بالسكربت لمنع الزووم في الآيفون القديم
-        document.addEventListener('dblclick', function(event) {
-            event.preventDefault();
-        }, { passive: false });
+        
+        document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
 
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
 
         let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
-        const scoreDisplay = document.getElementById('score'); const timerDisplay = document.getElementById('timer');
-        const burgerBtn = document.getElementById('burger-btn'); const startBtn = document.getElementById('start-btn');
-        const gameArea = document.getElementById('game-area'); const resultArea = document.getElementById('result-area');
-        const uniqueCodeDisplay = document.getElementById('unique-code'); const whatsappLink = document.getElementById('whatsapp-link');
-
+        
+        const scoreDisplay = document.getElementById('score'); 
+        const timerDisplay = document.getElementById('timer');
+        const burgerBtn = document.getElementById('burger-btn'); 
+        const trapBtn = document.getElementById('trap-btn');
+        const startBtn = document.getElementById('start-btn');
+        const playZone = document.getElementById('play-zone');
+        
         function generateRandomCode() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let result = 'MB-';
             for (let i = 0; i < 4; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }
             return result;
         }
 
+        // دالة لتحريك العناصر في أماكن عشوائية
+        function moveElementRandomly(el) {
+            const maxX = playZone.clientWidth - 80; // عرض الزرار تقريباً
+            const maxY = playZone.clientHeight - 80;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            
+            el.style.left = randomX + 'px';
+            el.style.top = randomY + 'px';
+        }
+
         function startGame() {
             score = 0; timeLeft = 10; isPlaying = true;
-            scoreDisplay.innerText = `🍔 ${score} ضغطة`; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
-            startBtn.style.display = 'none'; burgerBtn.disabled = false;
+            scoreDisplay.innerText = `🍔 ${score} / 20`; 
+            timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
+            
+            startBtn.style.display = 'none'; 
+            burgerBtn.style.display = 'block';
+            
+            // وضع البرجر في النص في البداية
+            burgerBtn.style.top = '35%'; burgerBtn.style.left = '35%';
+            trapBtn.style.display = 'none';
             
             clickSound.volume = 0.5;
-            clickSound.play().catch(e => console.log("الصوت محتاج تفاعل الأول"));
+            clickSound.play().catch(() => {});
 
             gameInterval = setInterval(() => {
                 timeLeft--; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
@@ -210,46 +224,73 @@
             if (!isPlaying) return;
             
             clickSound.currentTime = 0;
-            clickSound.play().catch(e => console.log(e));
+            clickSound.play().catch(() => {});
 
-            score++; scoreDisplay.innerText = `🍔 ${score} ضغطة`;
+            score++; scoreDisplay.innerText = `🍔 ${score} / 20`;
+            createFloatingText(event, '+1', 'plus-one');
 
-            createPlusOneEffect(event);
+            // حرك البرجر لمكان جديد
+            moveElementRandomly(burgerBtn);
+
+            // فرصة 50% إن البروكلي (الفخ) يظهر أو يغير مكانه
+            if (Math.random() > 0.5) {
+                trapBtn.style.display = 'block';
+                moveElementRandomly(trapBtn);
+            } else {
+                trapBtn.style.display = 'none';
+            }
 
             if (score >= 20) winGame();
         }
 
-        function createPlusOneEffect(e) {
-            const plus = document.createElement('div');
-            plus.classList.add('plus-one');
-            plus.innerText = '+1';
+        function tapTrap(event) {
+            if (!isPlaying) return;
             
-            let x = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth / 2;
-            let y = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight / 2;
+            // عقاب الضغط على البروكلي
+            if(score > 0) score--; 
+            scoreDisplay.innerText = `🍔 ${score} / 20`;
+            createFloatingText(event, '-1', 'minus-one');
             
-            plus.style.left = (x - 15) + 'px';
-            plus.style.top = (y - 30) + 'px';
+            // تأثير بصري (الشاشة تنور أحمر ثانية)
+            playZone.classList.add('error-flash');
+            setTimeout(() => playZone.classList.remove('error-flash'), 200);
+
+            trapBtn.style.display = 'none';
+        }
+
+        function createFloatingText(e, text, className) {
+            const floating = document.createElement('div');
+            floating.classList.add(className);
+            floating.innerText = text;
             
-            document.body.appendChild(plus);
-            setTimeout(() => plus.remove(), 600);
+            let x = e.clientX || (e.touches && e.touches[0].clientX);
+            let y = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            floating.style.left = (x - 10) + 'px';
+            floating.style.top = (y - 20) + 'px';
+            
+            document.body.appendChild(floating);
+            setTimeout(() => floating.remove(), 500);
         }
 
         function endGame() {
-            clearInterval(gameInterval); isPlaying = false; burgerBtn.disabled = true;
+            clearInterval(gameInterval); isPlaying = false; 
+            burgerBtn.style.display = 'none'; trapBtn.style.display = 'none';
             if (score < 20) { 
-                alert("الوقت خلص! ملحقتش المرة دي، بس تقدر تجرب تاني."); 
+                alert("الوقت خلص! البرجر كان سريع عليك، جرب تاني."); 
                 startBtn.style.display = 'inline-block'; 
-                startBtn.innerText = 'جرب تاني 🔄'; 
+                startBtn.innerText = 'العب تاني 🔄'; 
             }
         }
 
         function winGame() {
             clearInterval(gameInterval); isPlaying = false;
-            gameArea.style.display = 'none'; resultArea.style.display = 'block';
+            document.getElementById('game-area').style.display = 'none'; 
+            document.getElementById('result-area').style.display = 'block';
             
-            const newCode = generateRandomCode(); uniqueCodeDisplay.innerText = newCode;
+            const newCode = generateRandomCode(); document.getElementById('unique-code').innerText = newCode;
             const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
-            whatsappLink.href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
+            document.getElementById('whatsapp-link').href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
             
             createConfetti();
         }
