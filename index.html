@@ -8,7 +8,7 @@
         /* إعدادات الصفحة والخلفية */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #fff3e0; /* لون دافئ يفتح النفس */
+            background-color: #fff3e0; 
             color: #333; 
             margin: 0; 
             padding: 20px; 
@@ -18,6 +18,7 @@
             justify-content: center; 
             min-height: 100vh; 
             box-sizing: border-box;
+            overflow-x: hidden;
         }
 
         /* تصميم الكارت الأساسي */
@@ -30,6 +31,8 @@
             width: 100%;
             text-align: center;
             box-sizing: border-box;
+            position: relative;
+            z-index: 10;
         }
 
         /* تصميم اللوجو */
@@ -43,11 +46,10 @@
             margin-bottom: 15px; 
         }
 
-        /* العناوين والنصوص */
-        h1 { font-size: 28px; margin-bottom: 5px; color: #d35400; font-weight: 800; }
+        h1 { font-size: 28px; margin-bottom: 5px; color: #d35400; font-weight: 900; }
         p { font-size: 16px; color: #7f8c8d; margin-bottom: 25px; font-weight: 600; }
 
-        /* منطقة الإحصائيات (الوقت والضغطات) */
+        /* منطقة الإحصائيات */
         .stats-container {
             display: flex;
             justify-content: space-around;
@@ -66,7 +68,7 @@
             border: none; 
             cursor: pointer; 
             user-select: none; 
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             margin: 15px 0; 
             -webkit-tap-highlight-color: transparent; 
             filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15));
@@ -76,7 +78,7 @@
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
         }
 
-        /* الأزرار العامة وزر الواتساب */
+        /* الأزرار العامة */
         .btn { 
             background: linear-gradient(135deg, #ff9800, #f39c12); 
             color: white; 
@@ -95,15 +97,12 @@
             box-sizing: border-box;
         }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(243, 156, 18, 0.4); }
-        .whatsapp-btn { 
-            background: linear-gradient(135deg, #25D366, #128C7E); 
-            box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); 
-        }
+        .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); }
         .whatsapp-btn:hover { box-shadow: 0 12px 20px rgba(37, 211, 102, 0.4); }
 
-        /* شاشة النتيجة وكود الخصم */
         #game-area, #result-area { display: block; }
         #result-area { display: none; }
+        
         .discount-code { 
             font-size: 34px; 
             color: #27ae60; 
@@ -115,16 +114,42 @@
             border-radius: 16px; 
             background-color: #f0fdf4; 
         }
+
+        /* إيفيكت الـ +1 بيطير */
+        .plus-one {
+            position: absolute;
+            color: #e74c3c;
+            font-size: 30px;
+            font-weight: 900;
+            pointer-events: none;
+            animation: floatUp 0.6s ease-out forwards;
+            z-index: 100;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
+        }
+
+        /* إيفيكت ورق الاحتفال */
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background-color: #f1c40f;
+            animation: fall 3s linear infinite;
+            z-index: 1;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
     </style>
 </head>
 <body>
 
-    <!-- الكارت اللي بيجمع اللعبة كلها -->
     <div class="card">
-        
         <div id="game-area">
             <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-            
             <h1>تحدي الجوع! 🔥</h1>
             <p>اضغط على البرجر 20 مرة في 10 ثواني</p>
             
@@ -133,28 +158,26 @@
                 <div class="stats" id="score">🍔 0 ضغطة</div>
             </div>
             
-            <button id="burger-btn" onclick="tapBurger()" disabled>🍔</button>
+            <!-- تم إضافة (event) هنا عشان نحدد مكان الضغطة بالظبط -->
+            <button id="burger-btn" onclick="tapBurger(event)" disabled>🍔</button>
             <br>
             <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
         </div>
 
         <div id="result-area">
             <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-            
             <h1>عاش يا بطل! 🏆</h1>
             <p>خصمك 15% جاهز للاستخدام فوراً</p>
-            
             <div class="discount-code" id="unique-code">يتم التجهيز...</div>
-            
             <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
-            <button class="btn" style="background: #bdc3c7; box-shadow: none; margin-top: 15px; font-size: 16px; width: 70%;" onclick="location.reload()">العب تاني</button>
         </div>
-
     </div>
 
     <script>
-        // رقم الواتساب بتاعك
         const restaurantWhatsAppNumber = "201070500094"; 
+
+        // إضافة مؤثر صوتي للضغطة
+        const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
 
         let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
         const scoreDisplay = document.getElementById('score'); const timerDisplay = document.getElementById('timer');
@@ -172,16 +195,49 @@
             score = 0; timeLeft = 10; isPlaying = true;
             scoreDisplay.innerText = `🍔 ${score} ضغطة`; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
             startBtn.style.display = 'none'; burgerBtn.disabled = false;
+            
+            // تشغيل الصوت بصوت واطي في البداية عشان المتصفح يسمح بيه
+            clickSound.volume = 0.5;
+            clickSound.play().catch(e => console.log("الصوت محتاج تفاعل الأول"));
+
             gameInterval = setInterval(() => {
                 timeLeft--; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
                 if (timeLeft <= 0) endGame();
             }, 1000);
         }
 
-        function tapBurger() {
+        function tapBurger(event) {
             if (!isPlaying) return;
+            
+            // تشغيل الصوت مع كل ضغطة
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log(e));
+
+            // زيادة السكور
             score++; scoreDisplay.innerText = `🍔 ${score} ضغطة`;
+
+            // عمل إيفيكت +1 في مكان الضغطة بالظبط
+            createPlusOneEffect(event);
+
             if (score >= 20) winGame();
+        }
+
+        function createPlusOneEffect(e) {
+            const plus = document.createElement('div');
+            plus.classList.add('plus-one');
+            plus.innerText = '+1';
+            
+            // حساب مكان الماوس أو الصباع
+            let x = e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth / 2;
+            let y = e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight / 2;
+            
+            plus.style.left = (x - 15) + 'px';
+            plus.style.top = (y - 30) + 'px';
+            
+            document.body.appendChild(plus);
+            
+            // مسح الإيفيكت بعد ما يخلص عشان منزحمش الشاشة
+            setTimeout(() => plus.remove(), 600);
         }
 
         function endGame() {
@@ -196,9 +252,27 @@
         function winGame() {
             clearInterval(gameInterval); isPlaying = false;
             gameArea.style.display = 'none'; resultArea.style.display = 'block';
+            
             const newCode = generateRandomCode(); uniqueCodeDisplay.innerText = newCode;
             const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
             whatsappLink.href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
+            
+            // تشغيل إيفيكت الاحتفال
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#e67e22'];
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-' + (Math.random() * 20 + 10) + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationDelay = Math.random() * 1.5 + 's';
+                document.body.appendChild(confetti);
+            }
         }
     </script>
 </body>
