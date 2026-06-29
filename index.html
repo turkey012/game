@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي مانيز برجر</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; text-align: center; margin: 0; padding: 50px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; box-sizing: border-box; }
+        h1 { font-size: 24px; margin-bottom: 30px; color: #2c3e50; }
+        #game-area { display: block; }
+        .stats { font-size: 20px; font-weight: bold; margin: 10px 0; color: #e74c3c; }
+        #burger-btn { font-size: 100px; background: none; border: none; cursor: pointer; user-select: none; transition: transform 0.1s ease; margin: 20px 0; -webkit-tap-highlight-color: transparent; }
+        #burger-btn:active { transform: scale(0.85); }
+        .btn { background-color: #e74c3c; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; text-decoration: none; display: inline-block; }
+        .whatsapp-btn { background-color: #25D366; }
+        #result-area { display: none; background: white; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .discount-code { font-size: 32px; color: #27ae60; font-weight: bold; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed #27ae60; border-radius: 8px; background-color: #eafaf1; }
+    </style>
+</head>
+<body>
+
+    <div id="game-area">
+        <h1>تحدي مانيز برجر: اضغط 20 مرة في 10 ثواني!</h1>
+        <div class="stats" id="timer">الوقت: 10</div>
+        <div class="stats" id="score">الضغطات: 0</div>
+        <button id="burger-btn" onclick="tapBurger()" disabled>🍔</button>
+        <br>
+        <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي</button>
+    </div>
+
+    <div id="result-area">
+        <h1>عاش! كسبت التحدي 🏆</h1>
+        <p>خصمك 15% جاهز ومستنيك.</p>
+        <div class="discount-code" id="unique-code">يتم تجهيز الكود...</div>
+        <p>اضغط على الزرار تحت عشان تفعل الكود وتبدأ الأوردر بتاعك!</p>
+        <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">فعل الكود على الواتساب 💬</a>
+    </div>
+
+    <script>
+        // *** حط رقم واتساب المطعم هنا ***
+        const restaurantWhatsAppNumber = "201070500094"; 
+
+        let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
+        const scoreDisplay = document.getElementById('score'); const timerDisplay = document.getElementById('timer');
+        const burgerBtn = document.getElementById('burger-btn'); const startBtn = document.getElementById('start-btn');
+        const gameArea = document.getElementById('game-area'); const resultArea = document.getElementById('result-area');
+        const uniqueCodeDisplay = document.getElementById('unique-code'); const whatsappLink = document.getElementById('whatsapp-link');
+
+        function generateRandomCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let result = 'MB-';
+            for (let i = 0; i < 4; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }
+            return result;
+        }
+
+        function startGame() {
+            score = 0; timeLeft = 10; isPlaying = true;
+            scoreDisplay.innerText = `الضغطات: ${score}`; timerDisplay.innerText = `الوقت: ${timeLeft}`;
+            startBtn.style.display = 'none'; burgerBtn.disabled = false;
+            gameInterval = setInterval(() => {
+                timeLeft--; timerDisplay.innerText = `الوقت: ${timeLeft}`;
+                if (timeLeft <= 0) endGame();
+            }, 1000);
+        }
+
+        function tapBurger() {
+            if (!isPlaying) return;
+            score++; scoreDisplay.innerText = `الضغطات: ${score}`;
+            if (score >= 20) winGame();
+        }
+
+        function endGame() {
+            clearInterval(gameInterval); isPlaying = false; burgerBtn.disabled = true;
+            if (score < 20) { alert("الوقت خلص! ملحقتش المرة دي، جرب تاني."); startBtn.style.display = 'inline-block'; startBtn.innerText = 'جرب تاني'; }
+        }
+
+        function winGame() {
+            clearInterval(gameInterval); isPlaying = false;
+            gameArea.style.display = 'none'; resultArea.style.display = 'block';
+            const newCode = generateRandomCode(); uniqueCodeDisplay.innerText = newCode;
+            const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
+            whatsappLink.href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
+        }
+    </script>
+</body>
+</html>	
