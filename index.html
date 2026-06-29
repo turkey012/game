@@ -2,51 +2,158 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تحدي مانيز برجر</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; text-align: center; margin: 0; padding: 50px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; box-sizing: border-box; }
-        
-        /* كود تصميم اللوجو الجديد */
-        .brand-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #e74c3c; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        
-        h1 { font-size: 24px; margin-bottom: 30px; color: #2c3e50; }
-        #game-area { display: block; }
-        .stats { font-size: 20px; font-weight: bold; margin: 10px 0; color: #e74c3c; }
-        #burger-btn { font-size: 100px; background: none; border: none; cursor: pointer; user-select: none; transition: transform 0.1s ease; margin: 20px 0; -webkit-tap-highlight-color: transparent; }
-        #burger-btn:active { transform: scale(0.85); }
-        .btn { background-color: #e74c3c; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; text-decoration: none; display: inline-block; }
-        .whatsapp-btn { background-color: #25D366; }
-        #result-area { display: none; background: white; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .discount-code { font-size: 32px; color: #27ae60; font-weight: bold; letter-spacing: 2px; margin: 20px 0; padding: 15px; border: 2px dashed #27ae60; border-radius: 8px; background-color: #eafaf1; }
+        /* إعدادات الصفحة والخلفية */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #fff3e0; /* لون دافئ يفتح النفس */
+            color: #333; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            box-sizing: border-box;
+        }
+
+        /* تصميم الكارت الأساسي */
+        .card {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* تصميم اللوجو */
+        .brand-logo { 
+            width: 110px; 
+            height: 110px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 4px solid #ff9800; 
+            box-shadow: 0 8px 16px rgba(255, 152, 0, 0.2); 
+            margin-bottom: 15px; 
+        }
+
+        /* العناوين والنصوص */
+        h1 { font-size: 28px; margin-bottom: 5px; color: #d35400; font-weight: 800; }
+        p { font-size: 16px; color: #7f8c8d; margin-bottom: 25px; font-weight: 600; }
+
+        /* منطقة الإحصائيات (الوقت والضغطات) */
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            background: #fff8e1;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ffe082;
+        }
+        .stats { font-size: 18px; font-weight: bold; color: #e65100; }
+
+        /* زر البرجر التفاعلي */
+        #burger-btn { 
+            font-size: 110px; 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            user-select: none; 
+            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            margin: 15px 0; 
+            -webkit-tap-highlight-color: transparent; 
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.15));
+        }
+        #burger-btn:active { 
+            transform: scale(0.85); 
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+        }
+
+        /* الأزرار العامة وزر الواتساب */
+        .btn { 
+            background: linear-gradient(135deg, #ff9800, #f39c12); 
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            font-size: 20px; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            text-decoration: none; 
+            display: inline-block; 
+            width: 85%;
+            box-shadow: 0 8px 15px rgba(243, 156, 18, 0.3);
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 20px rgba(243, 156, 18, 0.4); }
+        .whatsapp-btn { 
+            background: linear-gradient(135deg, #25D366, #128C7E); 
+            box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); 
+        }
+        .whatsapp-btn:hover { box-shadow: 0 12px 20px rgba(37, 211, 102, 0.4); }
+
+        /* شاشة النتيجة وكود الخصم */
+        #game-area, #result-area { display: block; }
+        #result-area { display: none; }
+        .discount-code { 
+            font-size: 34px; 
+            color: #27ae60; 
+            font-weight: 900; 
+            letter-spacing: 3px; 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 3px dashed #2ecc71; 
+            border-radius: 16px; 
+            background-color: #f0fdf4; 
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-area">
-        <!-- إضافة اللوجو في شاشة البداية -->
-        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+    <!-- الكارت اللي بيجمع اللعبة كلها -->
+    <div class="card">
         
-        <h1>تحدي مانيز برجر: اضغط 20 مرة في 10 ثواني!</h1>
-        <div class="stats" id="timer">الوقت: 10</div>
-        <div class="stats" id="score">الضغطات: 0</div>
-        <button id="burger-btn" onclick="tapBurger()" disabled>🍔</button>
-        <br>
-        <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي</button>
-    </div>
+        <div id="game-area">
+            <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+            
+            <h1>تحدي الجوع! 🔥</h1>
+            <p>اضغط على البرجر 20 مرة في 10 ثواني</p>
+            
+            <div class="stats-container">
+                <div class="stats" id="timer">⏳ 10 ثواني</div>
+                <div class="stats" id="score">🍔 0 ضغطة</div>
+            </div>
+            
+            <button id="burger-btn" onclick="tapBurger()" disabled>🍔</button>
+            <br>
+            <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
+        </div>
 
-    <div id="result-area">
-        <!-- إضافة اللوجو في شاشة الفوز -->
-        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-        
-        <h1>عاش! كسبت التحدي 🏆</h1>
-        <p>خصمك 15% جاهز ومستنيك.</p>
-        <div class="discount-code" id="unique-code">يتم تجهيز الكود...</div>
-        <p>اضغط على الزرار تحت عشان تفعل الكود وتبدأ الأوردر بتاعك!</p>
-        <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">فعل الكود على الواتساب 💬</a>
+        <div id="result-area">
+            <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+            
+            <h1>عاش يا بطل! 🏆</h1>
+            <p>خصمك 15% جاهز للاستخدام فوراً</p>
+            
+            <div class="discount-code" id="unique-code">يتم التجهيز...</div>
+            
+            <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
+            <button class="btn" style="background: #bdc3c7; box-shadow: none; margin-top: 15px; font-size: 16px; width: 70%;" onclick="location.reload()">العب تاني</button>
+        </div>
+
     </div>
 
     <script>
+        // رقم الواتساب بتاعك
         const restaurantWhatsAppNumber = "201070500094"; 
 
         let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
@@ -63,23 +170,27 @@
 
         function startGame() {
             score = 0; timeLeft = 10; isPlaying = true;
-            scoreDisplay.innerText = `الضغطات: ${score}`; timerDisplay.innerText = `الوقت: ${timeLeft}`;
+            scoreDisplay.innerText = `🍔 ${score} ضغطة`; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
             startBtn.style.display = 'none'; burgerBtn.disabled = false;
             gameInterval = setInterval(() => {
-                timeLeft--; timerDisplay.innerText = `الوقت: ${timeLeft}`;
+                timeLeft--; timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
                 if (timeLeft <= 0) endGame();
             }, 1000);
         }
 
         function tapBurger() {
             if (!isPlaying) return;
-            score++; scoreDisplay.innerText = `الضغطات: ${score}`;
+            score++; scoreDisplay.innerText = `🍔 ${score} ضغطة`;
             if (score >= 20) winGame();
         }
 
         function endGame() {
             clearInterval(gameInterval); isPlaying = false; burgerBtn.disabled = true;
-            if (score < 20) { alert("الوقت خلص! ملحقتش المرة دي، جرب تاني."); startBtn.style.display = 'inline-block'; startBtn.innerText = 'جرب تاني'; }
+            if (score < 20) { 
+                alert("الوقت خلص! ملحقتش المرة دي، بس تقدر تجرب تاني."); 
+                startBtn.style.display = 'inline-block'; 
+                startBtn.innerText = 'جرب تاني 🔄'; 
+            }
         }
 
         function winGame() {
