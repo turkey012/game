@@ -58,7 +58,6 @@
         }
         .stats { font-size: 16px; font-weight: bold; color: #e65100; }
 
-        /* منطقة اللعب المخصصة لحركة البرجر والفخ */
         .play-zone {
             position: relative;
             width: 100%;
@@ -71,7 +70,6 @@
             transition: background 0.2s;
         }
 
-        /* تنسيق البرجر والفخ عشان يتحركوا بحرية */
         #burger-btn, #trap-btn {
             position: absolute;
             background: none; 
@@ -88,7 +86,6 @@
 
         #burger-btn:active, #trap-btn:active { transform: scale(0.8); }
 
-        /* تأثير اللون الأحمر عند الضغط على الفخ */
         .error-flash { background: #ffcdd2 !important; }
 
         .btn { 
@@ -106,14 +103,15 @@
             box-shadow: 0 8px 15px rgba(243, 156, 18, 0.3);
             transition: all 0.3s ease;
             box-sizing: border-box;
+            margin-bottom: 10px;
         }
         .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); }
+        .restart-btn { background: linear-gradient(135deg, #bdc3c7, #95a5a6); margin-top: 5px; }
 
-        #game-area, #result-area { display: block; }
-        #result-area { display: none; }
+        #game-area, #result-area, #share-area, #lose-area { display: none; }
         
         .discount-code { 
-            font-size: 30px; color: #27ae60; font-weight: 900; letter-spacing: 3px; 
+            font-size: 28px; color: #27ae60; font-weight: 900; letter-spacing: 2px; 
             margin: 15px 0; padding: 15px; border: 3px dashed #2ecc71; 
             border-radius: 16px; background-color: #f0fdf4; 
         }
@@ -136,40 +134,56 @@
 </head>
 <body>
 
-    <div class="card">
-        <div id="game-area">
-            <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-            <h1>تحدي الجوع! 🔥</h1>
-            <p>اضغط على البرجر 20 مرة.. واهرب من البروكلي 🥦!</p>
-            
-            <div class="stats-container">
-                <div class="stats" id="timer">⏳ 10 ثواني</div>
-                <div class="stats" id="score">🍔 0 / 20</div>
-            </div>
-            
-            <!-- مساحة اللعب -->
-            <div class="play-zone" id="play-zone">
-                <button id="burger-btn" onclick="tapBurger(event)" style="top: 35%; left: 35%;">🍔</button>
-                <button id="trap-btn" onclick="tapTrap(event)">🥦</button>
-            </div>
-
-            <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
+    <!-- شاشة اللعب -->
+    <div class="card" id="game-area">
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        <h1>تحدي الجوع! 🔥</h1>
+        <p>اضغط على البرجر 20 مرة.. واهرب من البروكلي 🥦!</p>
+        
+        <div class="stats-container">
+            <div class="stats" id="timer">⏳ 10 ثواني</div>
+            <div class="stats" id="score">🍔 0 / 20</div>
+        </div>
+        
+        <div class="play-zone" id="play-zone">
+            <button id="burger-btn" onclick="tapBurger(event)" style="top: 35%; left: 35%;">🍔</button>
+            <button id="trap-btn" onclick="tapTrap(event)">🥦</button>
         </div>
 
-        <div id="result-area">
-            <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-            <h1>عاش يا بطل! 🏆</h1>
-            <p>خصمك 15% جاهز للاستخدام فوراً</p>
-            <div class="discount-code" id="unique-code">يتم التجهيز...</div>
-            <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
-        </div>
+        <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
+        <p style="font-size: 12px; margin-top: 10px; color: #95a5a6; margin-bottom: 0;">* الخصم صالح لمدة يومين، من 11 الصبح لـ 4 العصر</p>
+    </div>
+
+    <!-- شاشة الخسارة (للمحاولة الأولى) -->
+    <div class="card" id="lose-area">
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        <h1>الوقت خلص! 😢</h1>
+        <p>البرجر كان سريع عليك المرادي.. بس لسه عندك فرصة تانية!</p>
+        <button class="btn restart-btn" onclick="location.reload()">العب المحاولة التانية 🔄</button>
+    </div>
+
+    <!-- شاشة الإغلاق والمشاركة (بعد خسارة المحاولتين) -->
+    <div class="card" id="share-area">
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        <h1>خلصت محاولاتك! 🔒</h1>
+        <p>عشان تفتح محاولة جديدة وتلعب تاني، شارك التحدي مع أصحابك وخليهم يجربوا حظهم.</p>
+        <button class="btn whatsapp-btn" onclick="shareAndUnlock()">شارك وافتح اللعبة 🔄</button>
+    </div>
+
+    <!-- شاشة الفوز -->
+    <div class="card" id="result-area">
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        <h1>عاش يا بطل! 🏆</h1>
+        <p>خصمك 15% جاهز ومتسجل عندنا<br><span style="font-size: 13px; color: #e74c3c; font-weight: bold;">(تقدر تستخدمه من 11 الصبح لـ 4 العصر، لمدة يومين بس)</span></p>
+        <div class="discount-code" id="unique-code">يتم التجهيز...</div>
+        <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
     </div>
 
     <script>
         const restaurantWhatsAppNumber = "201070500094"; 
+        const googleSheetURL = "https://script.google.com/macros/s/AKfycbyTBCufywHxko8Eb1Mi_DlwfnMX12SLAE_GD863D6As4rLk7cwxx9jQIjf-m93DUaaUxg/exec";
         
         document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
-
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
 
         let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
@@ -181,20 +195,42 @@
         const startBtn = document.getElementById('start-btn');
         const playZone = document.getElementById('play-zone');
         
-        function generateRandomCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let result = 'MB-';
-            for (let i = 0; i < 4; i++) { result += chars.charAt(Math.floor(Math.random() * chars.length)); }
-            return result;
+        let lossCount = parseInt(localStorage.getItem('mannys_losses')) || 0;
+        let isWinner = localStorage.getItem('mannys_winner') === 'true';
+
+        window.onload = function() {
+            if (isWinner) {
+                document.getElementById('share-area').innerHTML = `
+                    <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+                    <h1>إنت كسبت قبل كده! 🎉</h1>
+                    <p>استمتع بخصمك (من 11 ص لـ 4 م)، ومستنيين أوردرك.</p>
+                `;
+                document.getElementById('share-area').style.display = 'block';
+            } 
+            else if (lossCount >= 2) {
+                document.getElementById('share-area').style.display = 'block';
+            } 
+            else {
+                document.getElementById('game-area').style.display = 'block';
+            }
+        };
+
+        function generateSmartCode() {
+            const now = new Date();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const h = String(now.getHours()).padStart(2, '0');
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let rand = '';
+            for (let i = 0; i < 2; i++) { rand += chars.charAt(Math.floor(Math.random() * chars.length)); }
+            return `MB-${m}${d}-${h}-${rand}`;
         }
 
-        // دالة لتحريك العناصر في أماكن عشوائية
         function moveElementRandomly(el) {
-            const maxX = playZone.clientWidth - 80; // عرض الزرار تقريباً
+            const maxX = playZone.clientWidth - 80; 
             const maxY = playZone.clientHeight - 80;
-            
             const randomX = Math.floor(Math.random() * maxX);
             const randomY = Math.floor(Math.random() * maxY);
-            
             el.style.left = randomX + 'px';
             el.style.top = randomY + 'px';
         }
@@ -206,8 +242,6 @@
             
             startBtn.style.display = 'none'; 
             burgerBtn.style.display = 'block';
-            
-            // وضع البرجر في النص في البداية
             burgerBtn.style.top = '35%'; burgerBtn.style.left = '35%';
             trapBtn.style.display = 'none';
             
@@ -222,17 +256,14 @@
 
         function tapBurger(event) {
             if (!isPlaying) return;
-            
             clickSound.currentTime = 0;
             clickSound.play().catch(() => {});
 
             score++; scoreDisplay.innerText = `🍔 ${score} / 20`;
             createFloatingText(event, '+1', 'plus-one');
 
-            // حرك البرجر لمكان جديد
             moveElementRandomly(burgerBtn);
 
-            // فرصة 50% إن البروكلي (الفخ) يظهر أو يغير مكانه
             if (Math.random() > 0.5) {
                 trapBtn.style.display = 'block';
                 moveElementRandomly(trapBtn);
@@ -245,16 +276,12 @@
 
         function tapTrap(event) {
             if (!isPlaying) return;
-            
-            // عقاب الضغط على البروكلي
             if(score > 0) score--; 
             scoreDisplay.innerText = `🍔 ${score} / 20`;
             createFloatingText(event, '-1', 'minus-one');
             
-            // تأثير بصري (الشاشة تنور أحمر ثانية)
             playZone.classList.add('error-flash');
             setTimeout(() => playZone.classList.remove('error-flash'), 200);
-
             trapBtn.style.display = 'none';
         }
 
@@ -262,13 +289,10 @@
             const floating = document.createElement('div');
             floating.classList.add(className);
             floating.innerText = text;
-            
             let x = e.clientX || (e.touches && e.touches[0].clientX);
             let y = e.clientY || (e.touches && e.touches[0].clientY);
-            
             floating.style.left = (x - 10) + 'px';
             floating.style.top = (y - 20) + 'px';
-            
             document.body.appendChild(floating);
             setTimeout(() => floating.remove(), 500);
         }
@@ -277,22 +301,51 @@
             clearInterval(gameInterval); isPlaying = false; 
             burgerBtn.style.display = 'none'; trapBtn.style.display = 'none';
             if (score < 20) { 
-                alert("الوقت خلص! البرجر كان سريع عليك، جرب تاني."); 
-                startBtn.style.display = 'inline-block'; 
-                startBtn.innerText = 'العب تاني 🔄'; 
+                lossCount++;
+                localStorage.setItem('mannys_losses', lossCount);
+                
+                document.getElementById('game-area').style.display = 'none';
+                
+                if (lossCount >= 2) {
+                    document.getElementById('share-area').style.display = 'block';
+                } else {
+                    document.getElementById('lose-area').style.display = 'block';
+                }
             }
         }
 
         function winGame() {
             clearInterval(gameInterval); isPlaying = false;
+            
+            localStorage.setItem('mannys_winner', 'true'); 
+            
             document.getElementById('game-area').style.display = 'none'; 
             document.getElementById('result-area').style.display = 'block';
             
-            const newCode = generateRandomCode(); document.getElementById('unique-code').innerText = newCode;
-            const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
+            const newCode = generateSmartCode(); 
+            document.getElementById('unique-code').innerText = newCode;
+            
+            // رسالة الواتساب بتاعت الأوردر متعدلة
+            const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15% (الخصم من 11 ص لـ 4 م لمدة يومين)`;
             document.getElementById('whatsapp-link').href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
             
+            const currentDate = new Date().toLocaleString('ar-EG');
+            const fetchUrl = `${googleSheetURL}?code=${newCode}&date=${encodeURIComponent(currentDate)}`;
+            fetch(fetchUrl, { mode: 'no-cors' }).then(() => console.log('تم التسجيل بنجاح في الشيت'));
+
             createConfetti();
+        }
+
+        function shareAndUnlock() {
+            // رسالة الشير بالستايل التالت والمواعيد
+            const shareText = "خصم 15% من مانيز برجر للي صوابعه سريعة! 🍔🔥 العب التحدي، اهرب من الفخ، واكسب كودك دلوقتي (الخصم شغال من 11 لـ 4 لمدة يومين). وريني هتعمل إيه: " + window.location.href;
+            window.open(`https://wa.me/?text=${shareText}`, '_blank');
+            
+            localStorage.setItem('mannys_losses', 0);
+            
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
         }
 
         function createConfetti() {
