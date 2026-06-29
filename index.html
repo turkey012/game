@@ -6,6 +6,10 @@
     <title>تحدي مانيز برجر</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; text-align: center; margin: 0; padding: 50px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; box-sizing: border-box; }
+        
+        /* كود تصميم اللوجو الجديد */
+        .brand-logo { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #e74c3c; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
         h1 { font-size: 24px; margin-bottom: 30px; color: #2c3e50; }
         #game-area { display: block; }
         .stats { font-size: 20px; font-weight: bold; margin: 10px 0; color: #e74c3c; }
@@ -20,6 +24,9 @@
 <body>
 
     <div id="game-area">
+        <!-- إضافة اللوجو في شاشة البداية -->
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        
         <h1>تحدي مانيز برجر: اضغط 20 مرة في 10 ثواني!</h1>
         <div class="stats" id="timer">الوقت: 10</div>
         <div class="stats" id="score">الضغطات: 0</div>
@@ -29,6 +36,9 @@
     </div>
 
     <div id="result-area">
+        <!-- إضافة اللوجو في شاشة الفوز -->
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        
         <h1>عاش! كسبت التحدي 🏆</h1>
         <p>خصمك 15% جاهز ومستنيك.</p>
         <div class="discount-code" id="unique-code">يتم تجهيز الكود...</div>
@@ -37,7 +47,6 @@
     </div>
 
     <script>
-        // *** حط رقم واتساب المطعم هنا ***
         const restaurantWhatsAppNumber = "201070500094"; 
 
         let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
@@ -82,4 +91,4 @@
         }
     </script>
 </body>
-</html>	
+</html>
