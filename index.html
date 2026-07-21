@@ -138,11 +138,11 @@
     <div class="card" id="game-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1>تحدي الجوع! 🔥</h1>
-        <p>اضغط على البرجر 20 مرة.. واهرب من البروكلي 🥦!</p>
+        <p>اضغط على البرجر 35 مرة.. واهرب من البروكلي 🥦!</p>
         
         <div class="stats-container">
-            <div class="stats" id="timer">⏳ 10 ثواني</div>
-            <div class="stats" id="score">🍔 0 / 20</div>
+            <div class="stats" id="timer">⏳ 20 ثواني</div>
+            <div class="stats" id="score">🍔 0 / 35</div>
         </div>
         
         <div class="play-zone" id="play-zone">
@@ -151,7 +151,7 @@
         </div>
 
         <button class="btn" id="start-btn" onclick="startGame()">ابدأ التحدي دلوقتي</button>
-        <p style="font-size: 12px; margin-top: 10px; color: #95a5a6; margin-bottom: 0;">* الخصم صالح لمدة يومين، من 11 الصبح لـ 4 العصر</p>
+        <p style="font-size: 12px; margin-top: 10px; color: #95a5a6; margin-bottom: 0;">* الخصم تقدر تستخدمه مره واحده في خلال يومين بس</p>
     </div>
 
     <!-- شاشة الخسارة (للمحاولة الأولى) -->
@@ -174,7 +174,7 @@
     <div class="card" id="result-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1>عاش يا بطل! 🏆</h1>
-        <p>خصمك 15% جاهز ومتسجل عندنا<br><span style="font-size: 13px; color: #e74c3c; font-weight: bold;">(تقدر تستخدمه من 11 الصبح لـ 4 العصر، لمدة يومين بس)</span></p>
+        <p>خصمك 15% جاهز ومتسجل عندنا<br><span style="font-size: 13px; color: #e74c3c; font-weight: bold;">(تقدر تستخدمه مره واحده في خلال يومين بس)</span></p>
         <div class="discount-code" id="unique-code">يتم التجهيز...</div>
         <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
     </div>
@@ -338,7 +338,7 @@
 
         function shareAndUnlock() {
             // رسالة الشير بالستايل التالت والمواعيد
-            const shareText = "خصم 15% من مانيز برجر للي صوابعه سريعة! 🍔🔥 العب التحدي، اهرب من الفخ، واكسب كودك دلوقتي (الخصم شغال من 11 لـ 4 لمدة يومين). وريني هتعمل إيه: " + window.location.href;
+            const shareText = "خصم 15% من مانيز برجر للي صوابعه سريعة! 🍔🔥 العب التحدي، اهرب من الفخ، واكسب كودك دلوقتي (الخصم تقدر تستخدمه مره واحده في خلال يومين بس). وريني هتعمل إيه: " + window.location.href;
             window.open(`https://wa.me/?text=${shareText}`, '_blank');
             
             localStorage.setItem('mannys_losses', 0);
