@@ -67,7 +67,26 @@
             border: 2px dashed #ffb74d;
             margin-bottom: 15px;
             overflow: hidden;
-            transition: background 0.2s;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        /* تنسيقات مراحل المطبخ */
+        .stage-grill { background: #ffebee; border-color: #e53935; }
+        .stage-pack { background: #fff8e1; border-color: #ffb300; }
+        .stage-serve { background: #e8f5e9; border-color: #43a047; }
+        
+        #stage-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+            background: rgba(255,255,255,0.7);
+            padding: 4px 10px;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 5;
         }
 
         #burger-btn, #trap-btn {
@@ -108,8 +127,34 @@
         .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); }
         .restart-btn { background: linear-gradient(135deg, #bdc3c7, #95a5a6); margin-top: 5px; }
 
-        #game-area, #result-area, #share-area, #lose-area { display: none; }
+        /* إخفاء الشاشات في البداية */
+        #game-area, #result-area, #share-area, #lose-area, #name-area { display: none; }
         
+        /* تنسيقات إدخال الاسم وملك الفرع */
+        .input-field {
+            width: 85%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 2px solid #ffb74d;
+            font-size: 16px;
+            font-family: inherit;
+            text-align: center;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .input-field:focus { border-color: #d35400; }
+        
+        .king-board {
+            background: #fff8e1;
+            border: 2px dashed #f1c40f;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .king-name { font-weight: bold; color: #d35400; font-size: 16px; }
+
         .discount-code { 
             font-size: 28px; color: #27ae60; font-weight: 900; letter-spacing: 2px; 
             margin: 15px 0; padding: 15px; border: 3px dashed #2ecc71; 
@@ -134,6 +179,22 @@
 </head>
 <body>
 
+    <!-- شاشة إدخال الاسم (ملك الفرع) -->
+    <div class="card" id="name-area">
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        <h1>تحدي الجوع! 🔥</h1>
+        
+        <div class="king-board">
+            👑 ملك فرع فيصل الأسرع حالياً: <br>
+            <span class="king-name" id="king-display">جاري التحميل...</span>
+        </div>
+
+        <p>عشان تبدأ التحدي، اكتب اسمك الأول:</p>
+        <input type="text" id="player-name" class="input-field" placeholder="اكتب اسمك هنا...">
+        
+        <button class="btn" onclick="submitName()">يلا بينا 🚀</button>
+    </div>
+
     <!-- شاشة اللعب -->
     <div class="card" id="game-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
@@ -145,7 +206,8 @@
             <div class="stats" id="score">🍔 0 / 35</div>
         </div>
         
-        <div class="play-zone" id="play-zone">
+        <div class="play-zone stage-grill" id="play-zone">
+            <div id="stage-indicator">مرحلة الشواية 🔥</div>
             <button id="burger-btn" onclick="tapBurger(event)" style="top: 35%; left: 35%;">🍔</button>
             <button id="trap-btn" onclick="tapTrap(event)">🥦</button>
         </div>
@@ -173,7 +235,7 @@
     <!-- شاشة الفوز -->
     <div class="card" id="result-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-        <h1>عاش يا بطل! 🏆</h1>
+        <h1 id="win-title">عاش يا بطل! 🏆</h1>
         <p>خصمك 15% جاهز ومتسجل عندنا<br><span style="font-size: 13px; color: #e74c3c; font-weight: bold;">(تقدر تستخدمه مره واحده في خلال يومين بس)</span></p>
         <div class="discount-code" id="unique-code">يتم التجهيز...</div>
         <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
@@ -186,7 +248,8 @@
         document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
 
-        let score = 0; let timeLeft = 10; let gameInterval; let isPlaying = false;
+        let score = 0; let timeLeft = 20; let gameInterval; let isPlaying = false;
+        let currentPlayerName = "";
         
         const scoreDisplay = document.getElementById('score'); 
         const timerDisplay = document.getElementById('timer');
@@ -194,9 +257,14 @@
         const trapBtn = document.getElementById('trap-btn');
         const startBtn = document.getElementById('start-btn');
         const playZone = document.getElementById('play-zone');
+        const stageIndicator = document.getElementById('stage-indicator');
         
         let lossCount = parseInt(localStorage.getItem('mannys_losses')) || 0;
         let isWinner = localStorage.getItem('mannys_winner') === 'true';
+        
+        // بيانات ملك الفرع
+        let kingName = localStorage.getItem('mannys_king_name') || 'لسه مفيش 🤷‍♂️';
+        let kingTime = parseInt(localStorage.getItem('mannys_king_time')) || 0; // الوقت المتبقي (كل ما كان أكتر كان أسرع)
 
         window.onload = function() {
             if (isWinner) {
@@ -211,9 +279,22 @@
                 document.getElementById('share-area').style.display = 'block';
             } 
             else {
-                document.getElementById('game-area').style.display = 'block';
+                // عرض شاشة الاسم وملك الفرع
+                document.getElementById('king-display').innerText = kingName === 'لسه مفيش 🤷‍♂️' ? kingName : `${kingName} (وفر ${kingTime} ثواني)`;
+                document.getElementById('name-area').style.display = 'block';
             }
         };
+
+        function submitName() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if(nameInput === "") {
+                alert("لازم تكتب اسمك عشان تبدأ التحدي!");
+                return;
+            }
+            currentPlayerName = nameInput;
+            document.getElementById('name-area').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+        }
 
         function generateSmartCode() {
             const now = new Date();
@@ -235,10 +316,27 @@
             el.style.top = randomY + 'px';
         }
 
+        function updateStage() {
+            // مسح الكلاسات القديمة
+            playZone.classList.remove('stage-grill', 'stage-pack', 'stage-serve');
+            
+            if(score <= 12) {
+                playZone.classList.add('stage-grill');
+                stageIndicator.innerText = "مرحلة الشواية 🔥";
+            } else if (score <= 25) {
+                playZone.classList.add('stage-pack');
+                stageIndicator.innerText = "مرحلة التغليف 📦";
+            } else {
+                playZone.classList.add('stage-serve');
+                stageIndicator.innerText = "مرحلة التقديم 🍔";
+            }
+        }
+
         function startGame() {
             score = 0; timeLeft = 20; isPlaying = true;
             scoreDisplay.innerText = `🍔 ${score} / 35`; 
             timerDisplay.innerText = `⏳ ${timeLeft} ثواني`;
+            updateStage();
             
             startBtn.style.display = 'none'; 
             burgerBtn.style.display = 'block';
@@ -259,8 +357,11 @@
             clickSound.currentTime = 0;
             clickSound.play().catch(() => {});
 
-            score++; scoreDisplay.innerText = `🍔 ${score} / 20`;
+            score++; 
+            scoreDisplay.innerText = `🍔 ${score} / 35`;
             createFloatingText(event, '+1', 'plus-one');
+            
+            updateStage();
 
             moveElementRandomly(burgerBtn);
 
@@ -271,7 +372,7 @@
                 trapBtn.style.display = 'none';
             }
 
-            if (score >= 20) winGame();
+            if (score >= 35) winGame();
         }
 
         function tapTrap(event) {
@@ -279,6 +380,8 @@
             if(score > 0) score--; 
             scoreDisplay.innerText = `🍔 ${score} / 35`;
             createFloatingText(event, '-1', 'minus-one');
+            
+            updateStage();
             
             playZone.classList.add('error-flash');
             setTimeout(() => playZone.classList.remove('error-flash'), 200);
@@ -300,7 +403,7 @@
         function endGame() {
             clearInterval(gameInterval); isPlaying = false; 
             burgerBtn.style.display = 'none'; trapBtn.style.display = 'none';
-            if (score < 20) { 
+            if (score < 35) { 
                 lossCount++;
                 localStorage.setItem('mannys_losses', lossCount);
                 
@@ -319,25 +422,32 @@
             
             localStorage.setItem('mannys_winner', 'true'); 
             
+            // تحديث ملك الفرع لو الوقت المتبقي أحسن
+            if(timeLeft > kingTime) {
+                localStorage.setItem('mannys_king_name', currentPlayerName);
+                localStorage.setItem('mannys_king_time', timeLeft);
+                document.getElementById('win-title').innerText = `عاش يا ${currentPlayerName}! 👑 بقيت ملك الفرع`;
+            } else {
+                document.getElementById('win-title').innerText = `عاش يا ${currentPlayerName}! 🏆`;
+            }
+            
             document.getElementById('game-area').style.display = 'none'; 
             document.getElementById('result-area').style.display = 'block';
             
             const newCode = generateSmartCode(); 
             document.getElementById('unique-code').innerText = newCode;
             
-            // رسالة الواتساب بتاعت الأوردر متعدلة
-            const message = `أنا كسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15% (الخصم من 11 ص لـ 4 م لمدة يومين)`;
+            const message = `أنا ${currentPlayerName} وكسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
             document.getElementById('whatsapp-link').href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
             
             const currentDate = new Date().toLocaleString('ar-EG');
-            const fetchUrl = `${googleSheetURL}?code=${newCode}&date=${encodeURIComponent(currentDate)}`;
+            const fetchUrl = `${googleSheetURL}?code=${newCode}&date=${encodeURIComponent(currentDate)}&name=${encodeURIComponent(currentPlayerName)}`;
             fetch(fetchUrl, { mode: 'no-cors' }).then(() => console.log('تم التسجيل بنجاح في الشيت'));
 
             createConfetti();
         }
 
         function shareAndUnlock() {
-            // رسالة الشير بالستايل التالت والمواعيد
             const shareText = "خصم 15% من مانيز برجر للي صوابعه سريعة! 🍔🔥 العب التحدي، اهرب من الفخ، واكسب كودك دلوقتي (الخصم تقدر تستخدمه مره واحده في خلال يومين بس). وريني هتعمل إيه: " + window.location.href;
             window.open(`https://wa.me/?text=${shareText}`, '_blank');
             
