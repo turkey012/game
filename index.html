@@ -70,7 +70,6 @@
             transition: background 0.3s, border-color 0.3s;
         }
 
-        /* تنسيقات مراحل المطبخ */
         .stage-grill { background: #ffebee; border-color: #e53935; }
         .stage-pack { background: #fff8e1; border-color: #ffb300; }
         .stage-serve { background: #e8f5e9; border-color: #43a047; }
@@ -127,10 +126,8 @@
         .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); }
         .restart-btn { background: linear-gradient(135deg, #bdc3c7, #95a5a6); margin-top: 5px; }
 
-        /* إخفاء الشاشات في البداية */
         #game-area, #result-area, #share-area, #lose-area, #name-area { display: none; }
         
-        /* تنسيقات إدخال الاسم وملك الفرع */
         .input-field {
             width: 85%;
             padding: 15px;
@@ -145,15 +142,30 @@
         }
         .input-field:focus { border-color: #d35400; }
         
-        .king-board {
+        /* تنسيقات قائمة الأبطال (أول 3) */
+        .leaderboard {
             background: #fff8e1;
             border: 2px dashed #f1c40f;
             border-radius: 12px;
-            padding: 10px;
+            padding: 15px;
             margin-bottom: 15px;
             font-size: 14px;
+            text-align: right;
         }
-        .king-name { font-weight: bold; color: #d35400; font-size: 16px; }
+        .leaderboard h3 { text-align: center; color: #d35400; margin: 0 0 12px 0; font-size: 16px;}
+        .leader-item { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 8px; 
+            font-weight: bold;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #f9e79f;
+        }
+        .leader-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .leader-1 { color: #c0392b; font-size: 16px; }
+        .leader-2 { color: #d35400; }
+        .leader-3 { color: #27ae60; }
+        .loading-text { text-align: center; color: #7f8c8d; }
 
         .discount-code { 
             font-size: 28px; color: #27ae60; font-weight: 900; letter-spacing: 2px; 
@@ -175,21 +187,27 @@
 
         .confetti { position: fixed; width: 10px; height: 10px; z-index: 1; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+        
+        .dev-btn {
+            margin-top: 15px; background: none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 5px; cursor: pointer; color: #777; font-family: inherit;
+        }
     </style>
 </head>
 <body>
 
-    <!-- شاشة إدخال الاسم (ملك الفرع) -->
+    <!-- شاشة إدخال الاسم وقائمة الأبطال (Top 3) -->
     <div class="card" id="name-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1>تحدي الجوع! 🔥</h1>
         
-        <div class="king-board">
-            👑 ملك فرع فيصل الأسرع حالياً: <br>
-            <span class="king-name" id="king-display">جاري التحميل...</span>
+        <div class="leaderboard">
+            <h3>🏆 أسرع 3 أبطال في فرع فيصل</h3>
+            <div id="top3-list">
+                <div class="loading-text">جاري تحميل الأسماء... ⏳</div>
+            </div>
         </div>
 
-        <p>عشان تبدأ التحدي، اكتب اسمك الأول:</p>
+        <p>عشان تبدأ التحدي وتنافسهم، اكتب اسمك الأول:</p>
         <input type="text" id="player-name" class="input-field" placeholder="اكتب اسمك هنا...">
         
         <button class="btn" onclick="submitName()">يلا بينا 🚀</button>
@@ -216,7 +234,7 @@
         <p style="font-size: 12px; margin-top: 10px; color: #95a5a6; margin-bottom: 0;">* الخصم تقدر تستخدمه مره واحده في خلال يومين بس</p>
     </div>
 
-    <!-- شاشة الخسارة (للمحاولة الأولى) -->
+    <!-- شاشة الخسارة -->
     <div class="card" id="lose-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1>الوقت خلص! 😢</h1>
@@ -224,7 +242,7 @@
         <button class="btn restart-btn" onclick="location.reload()">العب المحاولة التانية 🔄</button>
     </div>
 
-    <!-- شاشة الإغلاق والمشاركة (بعد خسارة المحاولتين) -->
+    <!-- شاشة المشاركة -->
     <div class="card" id="share-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1>خلصت محاولاتك! 🔒</h1>
@@ -239,11 +257,13 @@
         <p>خصمك 15% جاهز ومتسجل عندنا<br><span style="font-size: 13px; color: #e74c3c; font-weight: bold;">(تقدر تستخدمه مره واحده في خلال يومين بس)</span></p>
         <div class="discount-code" id="unique-code">يتم التجهيز...</div>
         <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
+        
+        <button class="dev-btn" onclick="localStorage.clear(); location.reload();">🔄 العب باسم تاني (للتجربة)</button>
     </div>
 
     <script>
         const restaurantWhatsAppNumber = "201070500094"; 
-        const googleSheetURL = "https://script.google.com/macros/s/AKfycbyTBCufywHxko8Eb1Mi_DlwfnMX12SLAE_GD863D6As4rLk7cwxx9jQIjf-m93DUaaUxg/exec";
+        const googleSheetURL = "https://script.google.com/macros/s/AKfycby6NcoLbFOMRbjM6krkvKZjSP-koHKOoup9ANaH4qAgjLVtGmoEwO-2stpglYlOc_JXIw/exec";
         
         document.addEventListener('dblclick', function(event) { event.preventDefault(); }, { passive: false });
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
@@ -261,10 +281,6 @@
         
         let lossCount = parseInt(localStorage.getItem('mannys_losses')) || 0;
         let isWinner = localStorage.getItem('mannys_winner') === 'true';
-        
-        // بيانات ملك الفرع
-        let kingName = localStorage.getItem('mannys_king_name') || 'لسه مفيش 🤷‍♂️';
-        let kingTime = parseInt(localStorage.getItem('mannys_king_time')) || 0; // الوقت المتبقي (كل ما كان أكتر كان أسرع)
 
         window.onload = function() {
             if (isWinner) {
@@ -272,6 +288,7 @@
                     <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
                     <h1>إنت كسبت قبل كده! 🎉</h1>
                     <p>استمتع بخصمك (من 11 ص لـ 4 م)، ومستنيين أوردرك.</p>
+                    <button class="dev-btn" onclick="localStorage.clear(); location.reload();">🔄 مسح الذاكرة والتجربة من جديد</button>
                 `;
                 document.getElementById('share-area').style.display = 'block';
             } 
@@ -279,9 +296,34 @@
                 document.getElementById('share-area').style.display = 'block';
             } 
             else {
-                // عرض شاشة الاسم وملك الفرع
-                document.getElementById('king-display').innerText = kingName === 'لسه مفيش 🤷‍♂️' ? kingName : `${kingName} (وفر ${kingTime} ثواني)`;
                 document.getElementById('name-area').style.display = 'block';
+                
+                // جلب قائمة أسرع 3 من الشيت
+                fetch(`${googleSheetURL}?action=get_top3`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const top3List = document.getElementById('top3-list');
+                        top3List.innerHTML = '';
+                        
+                        if (data.length === 0) {
+                            top3List.innerHTML = '<div class="loading-text" style="color: #27ae60; font-weight: bold;">لسه مفيش حد لعب.. خليك أنت الأول! 🚀</div>';
+                        } else {
+                            const medals = ['🥇', '🥈', '🥉'];
+                            const classes = ['leader-1', 'leader-2', 'leader-3'];
+                            
+                            data.forEach((player, index) => {
+                                top3List.innerHTML += `
+                                <div class="leader-item ${classes[index]}">
+                                    <span>${medals[index]} ${player.name}</span>
+                                    <span>وفر ${player.time} ثواني</span>
+                                </div>`;
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error('خطأ في جلب البيانات:', err);
+                        document.getElementById('top3-list').innerHTML = '<div class="loading-text" style="color: #e74c3c;">فيه مشكلة في تحميل الأسماء 🤷‍♂️</div>';
+                    });
             }
         };
 
@@ -317,7 +359,6 @@
         }
 
         function updateStage() {
-            // مسح الكلاسات القديمة
             playZone.classList.remove('stage-grill', 'stage-pack', 'stage-serve');
             
             if(score <= 12) {
@@ -362,7 +403,6 @@
             createFloatingText(event, '+1', 'plus-one');
             
             updateStage();
-
             moveElementRandomly(burgerBtn);
 
             if (Math.random() > 0.5) {
@@ -421,15 +461,7 @@
             clearInterval(gameInterval); isPlaying = false;
             
             localStorage.setItem('mannys_winner', 'true'); 
-            
-            // تحديث ملك الفرع لو الوقت المتبقي أحسن
-            if(timeLeft > kingTime) {
-                localStorage.setItem('mannys_king_name', currentPlayerName);
-                localStorage.setItem('mannys_king_time', timeLeft);
-                document.getElementById('win-title').innerText = `عاش يا ${currentPlayerName}! 👑 بقيت ملك الفرع`;
-            } else {
-                document.getElementById('win-title').innerText = `عاش يا ${currentPlayerName}! 🏆`;
-            }
+            document.getElementById('win-title').innerText = `عاش يا ${currentPlayerName}! 🏆`;
             
             document.getElementById('game-area').style.display = 'none'; 
             document.getElementById('result-area').style.display = 'block';
@@ -440,9 +472,14 @@
             const message = `أنا ${currentPlayerName} وكسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
             document.getElementById('whatsapp-link').href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
             
+            // إرسال البيانات للشيت مع الانتظار للتأكد من التسجيل
             const currentDate = new Date().toLocaleString('ar-EG');
-            const fetchUrl = `${googleSheetURL}?code=${newCode}&date=${encodeURIComponent(currentDate)}&name=${encodeURIComponent(currentPlayerName)}`;
-            fetch(fetchUrl, { mode: 'no-cors' }).then(() => console.log('تم التسجيل بنجاح في الشيت'));
+            const fetchUrl = `${googleSheetURL}?action=save&code=${newCode}&date=${encodeURIComponent(currentDate)}&name=${encodeURIComponent(currentPlayerName)}&time_left=${timeLeft}`;
+            
+            fetch(fetchUrl)
+                .then(response => response.json())
+                .then(data => console.log('تم التسجيل بنجاح في داتا بيز الشيت'))
+                .catch(err => console.error('خطأ في التسجيل:', err));
 
             createConfetti();
         }
