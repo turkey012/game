@@ -126,7 +126,7 @@
         .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); box-shadow: 0 8px 15px rgba(37, 211, 102, 0.3); }
         .restart-btn { background: linear-gradient(135deg, #bdc3c7, #95a5a6); margin-top: 5px; }
 
-        #game-area, #result-area, #share-area, #lose-area, #name-area { display: none; }
+        #game-area, #result-area, #share-area, #lose-area, #name-area, #already-won-area { display: none; }
         
         .input-field {
             width: 85%;
@@ -142,7 +142,6 @@
         }
         .input-field:focus { border-color: #d35400; }
         
-        /* تنسيقات قائمة الأبطال (أول 3) */
         .leaderboard {
             background: #fff8e1;
             border: 2px dashed #f1c40f;
@@ -187,13 +186,17 @@
 
         .confetti { position: fixed; width: 10px; height: 10px; z-index: 1; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
-        
-        .dev-btn {
-            margin-top: 15px; background: none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 5px; cursor: pointer; color: #777; font-family: inherit;
-        }
     </style>
 </head>
 <body>
+
+    <!-- شاشة الإغلاق التام لمن فاز سابقاً -->
+    <div class="card" id="already-won-area">
+        <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
+        <h1>إنت كسبت قبل كده! 🎉</h1>
+        <p>الخصم بتاعك متسجل عندنا وتقدر تستخدمه من 11 الصبح لـ 4 العصر.</p>
+        <p style="color: #e74c3c; font-weight: bold; font-size: 14px;">(التحدي مسموح بيه مرة واحدة فقط لكل شخص)</p>
+    </div>
 
     <!-- شاشة إدخال الاسم وقائمة الأبطال (Top 3) -->
     <div class="card" id="name-area">
@@ -242,7 +245,7 @@
         <button class="btn restart-btn" onclick="location.reload()">العب المحاولة التانية 🔄</button>
     </div>
 
-    <!-- شاشة المشاركة -->
+    <!-- شاشة المشاركة (لزيادة المحاولات) -->
     <div class="card" id="share-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1>خلصت محاولاتك! 🔒</h1>
@@ -254,11 +257,18 @@
     <div class="card" id="result-area">
         <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
         <h1 id="win-title">عاش يا بطل! 🏆</h1>
+        
+        <!-- ليدر بورد الفوز -->
+        <div class="leaderboard" style="margin-bottom: 15px; border-color: #2ecc71; background: #e8f5e9;">
+            <h3 style="color: #27ae60;">🏆 ترتيب الأبطال الحالي</h3>
+            <div id="result-top3-list">
+                <div class="loading-text">جاري تحديث القائمة... ⏳</div>
+            </div>
+        </div>
+
         <p>خصمك 15% جاهز ومتسجل عندنا<br><span style="font-size: 13px; color: #e74c3c; font-weight: bold;">(تقدر تستخدمه مره واحده في خلال يومين بس)</span></p>
         <div class="discount-code" id="unique-code">يتم التجهيز...</div>
         <a href="#" id="whatsapp-link" class="btn whatsapp-btn" target="_blank">اطلب على الواتساب 💬</a>
-        
-        <button class="dev-btn" onclick="localStorage.clear(); location.reload();">🔄 العب باسم تاني (للتجربة)</button>
     </div>
 
     <script>
@@ -284,13 +294,8 @@
 
         window.onload = function() {
             if (isWinner) {
-                document.getElementById('share-area').innerHTML = `
-                    <img src="logo.png" alt="Manny's Burger Logo" class="brand-logo">
-                    <h1>إنت كسبت قبل كده! 🎉</h1>
-                    <p>استمتع بخصمك (من 11 ص لـ 4 م)، ومستنيين أوردرك.</p>
-                    <button class="dev-btn" onclick="localStorage.clear(); location.reload();">🔄 مسح الذاكرة والتجربة من جديد</button>
-                `;
-                document.getElementById('share-area').style.display = 'block';
+                // منع تام لأي شخص كسب إنه يلعب تاني
+                document.getElementById('already-won-area').style.display = 'block';
             } 
             else if (lossCount >= 2) {
                 document.getElementById('share-area').style.display = 'block';
@@ -298,7 +303,7 @@
             else {
                 document.getElementById('name-area').style.display = 'block';
                 
-                // جلب قائمة أسرع 3 من الشيت
+                // جلب قائمة أسرع 3 من الشيت لشاشة البداية
                 fetch(`${googleSheetURL}?action=get_top3`)
                     .then(response => response.json())
                     .then(data => {
@@ -460,7 +465,9 @@
         function winGame() {
             clearInterval(gameInterval); isPlaying = false;
             
+            // تسجيل الفوز لمنع اللعب مرة أخرى
             localStorage.setItem('mannys_winner', 'true'); 
+            
             document.getElementById('win-title').innerText = `عاش يا ${currentPlayerName}! 🏆`;
             
             document.getElementById('game-area').style.display = 'none'; 
@@ -472,16 +479,51 @@
             const message = `أنا ${currentPlayerName} وكسبت في تحدي مانيز برجر! 🍔🔥%0Aكود الخصم بتاعي هو: *${newCode}*%0Aعايز أعمل أوردر بخصم 15%`;
             document.getElementById('whatsapp-link').href = `https://wa.me/${restaurantWhatsAppNumber}?text=${message}`;
             
-            // إرسال البيانات للشيت مع الانتظار للتأكد من التسجيل
             const currentDate = new Date().toLocaleString('ar-EG');
             const fetchUrl = `${googleSheetURL}?action=save&code=${newCode}&date=${encodeURIComponent(currentDate)}&name=${encodeURIComponent(currentPlayerName)}&time_left=${timeLeft}`;
             
             fetch(fetchUrl)
                 .then(response => response.json())
-                .then(data => console.log('تم التسجيل بنجاح في داتا بيز الشيت'))
-                .catch(err => console.error('خطأ في التسجيل:', err));
+                .then(data => {
+                    console.log('تم التسجيل بنجاح في الداتا بيز');
+                    fetchLeaderboardForResult();
+                })
+                .catch(err => {
+                    console.error('خطأ في التسجيل:', err);
+                    fetchLeaderboardForResult();
+                });
 
             createConfetti();
+        }
+
+        function fetchLeaderboardForResult() {
+            fetch(`${googleSheetURL}?action=get_top3`)
+                .then(response => response.json())
+                .then(data => {
+                    const top3List = document.getElementById('result-top3-list');
+                    top3List.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        top3List.innerHTML = '<div class="loading-text" style="color: #27ae60; font-weight: bold;">أنت الأول! 🚀</div>';
+                    } else {
+                        const medals = ['🥇', '🥈', '🥉'];
+                        const classes = ['leader-1', 'leader-2', 'leader-3'];
+                        
+                        data.forEach((player, index) => {
+                            let isCurrentPlayer = (player.name === currentPlayerName && player.time === timeLeft);
+                            let highlight = isCurrentPlayer ? 'style="background-color: #d4efdf; padding: 5px; border-radius: 8px;"' : '';
+                            
+                            top3List.innerHTML += `
+                            <div class="leader-item ${classes[index]}" ${highlight}>
+                                <span>${medals[index]} ${player.name}</span>
+                                <span>وفر ${player.time} ثواني</span>
+                            </div>`;
+                        });
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('result-top3-list').innerHTML = '<div class="loading-text" style="color: #e74c3c;">فيه مشكلة في تحميل الأسماء 🤷‍♂️</div>';
+                });
         }
 
         function shareAndUnlock() {
